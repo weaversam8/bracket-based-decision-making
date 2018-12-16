@@ -9,16 +9,16 @@ document.addEventListener('DOMContentLoaded', function () {
     //
     // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
 
-    try {
-        let app = firebase.app();
-        let features = ['auth', 'database', 'messaging', 'storage'].filter(feature => typeof app[feature] ===
-            'function');
-        if (features.length == 0) features = ['no modules'];
-        document.getElementById('load').innerHTML = `Firebase SDK loaded with ${features.join(', ')}`;
-    } catch (e) {
-        console.error(e);
-        document.getElementById('load').innerHTML = 'Error loading the Firebase SDK, check the console.';
-    }
+    // try {
+    //     let app = firebase.app();
+    //     let features = ['auth', 'database', 'messaging', 'storage'].filter(feature => typeof app[feature] ===
+    //         'function');
+    //     if (features.length == 0) features = ['no modules'];
+    //     document.getElementById('load').innerHTML = `Firebase SDK loaded with ${features.join(', ')}`;
+    // } catch (e) {
+    //     console.error(e);
+    //     document.getElementById('load').innerHTML = 'Error loading the Firebase SDK, check the console.';
+    // }
 
     // Set up the listener for when someone types something in
     $('#input').keyup((e) => {
@@ -177,6 +177,8 @@ document.addEventListener('DOMContentLoaded', function () {
     // bind to the input
     window.mt = new Mousetrap(document.querySelector('#input'));
     window.mt.bind('ctrl+enter', window.start);
+
+    $('.button.start').click(window.start);
 
 });
 
