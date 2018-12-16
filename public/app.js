@@ -20,9 +20,13 @@ document.addEventListener('DOMContentLoaded', function () {
     //     document.getElementById('load').innerHTML = 'Error loading the Firebase SDK, check the console.';
     // }
 
+    let started = false;
+
+    $('#input').focus();
+
     // Set up the listener for when someone types something in
     $('#input').keyup((e) => {
-        if (e.keyCode == 13) {
+        if (e.keyCode == 13 && !started) {
             // the user pressed enter in the input box
             let item = $('#input').val();
             $('#input').val('');
@@ -57,6 +61,12 @@ document.addEventListener('DOMContentLoaded', function () {
     // function for starting the bracket
     window.start = (e) => {
         e.stopPropagation();
+
+        if ($('#input').val()) {
+            window.addItem($('#input').val());
+            $('#input').val('');
+        }
+        started = true;
 
         // display the new view
         $('#pre').fadeOut(() => {
@@ -165,6 +175,8 @@ document.addEventListener('DOMContentLoaded', function () {
     // set the binds
     Mousetrap.bind('left', () => window.select(0));
     Mousetrap.bind('right', () => window.select(1));
+    $('div#opt1 .button').click(window.select.bind(window, 0));
+    $('div#opt2 .button').click(window.select.bind(window, 1));
 
     window.calculateMatchup = (roundIndex, matchIndex) => {
         let bracket = $('#bracket .bracket');
