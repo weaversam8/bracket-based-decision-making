@@ -59,6 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     // function for starting the bracket
+    let teamWidth = 70
     window.start = (e) => {
         e.stopPropagation();
 
@@ -67,6 +68,7 @@ document.addEventListener('DOMContentLoaded', function () {
             $('#input').val('');
         }
         started = true;
+        teamWidth = window.bracketLabelWidth(window.items.map((item) => item.value), teamWidth);
 
         // display the new view
         $('#pre').fadeOut(() => {
@@ -107,7 +109,8 @@ document.addEventListener('DOMContentLoaded', function () {
         window.bracketObj = $('#bracket').bracket({
             init: window.bracket,
             skipConsolationRound: true,
-            centerConnectors: true
+            centerConnectors: true,
+            teamWidth,
         });
 
         // fill out the first two options on the bracket
@@ -164,12 +167,28 @@ document.addEventListener('DOMContentLoaded', function () {
                 window.bracketObj = $('#bracket').bracket({
                     init: window.bracket,
                     skipConsolationRound: true,
-                    centerConnectors: true
+                    centerConnectors: true,
+                    teamWidth,
                 });
                 window.updateChoices();
                 return;
             }
         }
+    }
+
+    window.bracketLabelWidth = (items, minWidth = 70) => {
+        const $widthCheck = $('<div class="jQBracket"><div class="team"><div class="label"></div></div></div>').appendTo('body');
+        const $label = $widthCheck.find('.label');
+
+        let width = minWidth;
+        items.forEach((item) => {
+            $label.text(item);
+            width = Math.max($label.width() + 6, width);
+        });
+
+        $widthCheck.remove();
+
+        return width;
     }
 
     // set the binds
