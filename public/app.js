@@ -9,20 +9,24 @@ document.addEventListener('DOMContentLoaded', function () {
     //
     // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
 
-    try {
-        let app = firebase.app();
-        let features = ['auth', 'database', 'messaging', 'storage'].filter(feature => typeof app[feature] ===
-            'function');
-        if (features.length == 0) features = ['no modules'];
-        document.getElementById('load').innerHTML = `Firebase SDK loaded with ${features.join(', ')}`;
-    } catch (e) {
-        console.error(e);
-        document.getElementById('load').innerHTML = 'Error loading the Firebase SDK, check the console.';
-    }
+    // try {
+    //     let app = firebase.app();
+    //     let features = ['auth', 'database', 'messaging', 'storage'].filter(feature => typeof app[feature] ===
+    //         'function');
+    //     if (features.length == 0) features = ['no modules'];
+    //     document.getElementById('load').innerHTML = `Firebase SDK loaded with ${features.join(', ')}`;
+    // } catch (e) {
+    //     console.error(e);
+    //     document.getElementById('load').innerHTML = 'Error loading the Firebase SDK, check the console.';
+    // }
+
+    let started = false;
+
+    $('#input').focus();
 
     // Set up the listener for when someone types something in
     $('#input').keyup((e) => {
-        if (e.keyCode == 13) {
+        if (e.keyCode == 13 && !started) {
             // the user pressed enter in the input box
             let item = $('#input').val();
             $('#input').val('');
@@ -55,8 +59,16 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     // function for starting the bracket
+    let teamWidth = 70
     window.start = (e) => {
         e.stopPropagation();
+
+        if ($('#input').val()) {
+            window.addItem($('#input').val());
+            $('#input').val('');
+        }
+        started = true;
+        teamWidth = window.bracketLabelWidth(window.items.map((item) => item.value), teamWidth);
 
         // display the new view
         $('#pre').fadeOut(() => {
@@ -97,7 +109,8 @@ document.addEventListener('DOMContentLoaded', function () {
         window.bracketObj = $('#bracket').bracket({
             init: window.bracket,
             skipConsolationRound: true,
-            centerConnectors: true
+            centerConnectors: true,
+            teamWidth,
         });
 
         // fill out the first two options on the bracket
@@ -154,7 +167,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 window.bracketObj = $('#bracket').bracket({
                     init: window.bracket,
                     skipConsolationRound: true,
-                    centerConnectors: true
+                    centerConnectors: true,
+                    teamWidth,
                 });
                 window.updateChoices();
                 return;
@@ -162,9 +176,26 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    window.bracketLabelWidth = (items, minWidth = 70) => {
+        const $widthCheck = $('<div class="jQBracket"><div class="team"><div class="label"></div></div></div>').appendTo('body');
+        const $label = $widthCheck.find('.label');
+
+        let width = minWidth;
+        items.forEach((item) => {
+            $label.text(item);
+            width = Math.max($label.width() + 6, width);
+        });
+
+        $widthCheck.remove();
+
+        return width;
+    }
+
     // set the binds
     Mousetrap.bind('left', () => window.select(0));
     Mousetrap.bind('right', () => window.select(1));
+    $('div#opt1 .button').click(window.select.bind(window, 0));
+    $('div#opt2 .button').click(window.select.bind(window, 1));
 
     window.calculateMatchup = (roundIndex, matchIndex) => {
         let bracket = $('#bracket .bracket');
@@ -177,6 +208,8 @@ document.addEventListener('DOMContentLoaded', function () {
     // bind to the input
     window.mt = new Mousetrap(document.querySelector('#input'));
     window.mt.bind('ctrl+enter', window.start);
+
+    $('.button.start').click(window.start);
 
 });
 

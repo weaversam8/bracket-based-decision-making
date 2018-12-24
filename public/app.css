@@ -99,7 +99,7 @@ body {
     display: none;
 }
 
-kbd {
+kbd, kbd.button {
     padding: 0.1em 0.6em;
     border: 1px solid #ccc;
     font-size: 11px;
@@ -125,6 +125,6 @@ kbd {
     padding: 10px;
 }
 
-.option>kbd {
+.option > .button {
     font-size: 3rem;
 }
